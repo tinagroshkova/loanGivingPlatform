@@ -99,16 +99,20 @@ class ViewController {
 
     renderLogout = () => {
         let logOut = document.getElementById("logOut");
-        logOut.addEventListener("click", () => {
-            userManager.logout();
-            let loggedUser = document.getElementById("loggedUserName");
-            loggedUser.innerText = "";
-            logOut.innerText = "";
-            location.hash = "login";
-        });
+        logOut.addEventListener("click", logUserOut);
+        
+        let logUserOut = () => {
+            if (window.confirm("Do you really want to leave?")) {
+                userManager.logout();
+                let loggedUser = document.getElementById("loggedUserName");
+                loggedUser.innerText = "";
+                logOut.innerText = "";
+                location.hash = "login";
+                logOut.removeEventListener("click", logUserOut); // remove the listener
+            }
+        };
     };
 
-    
     validateRegister = () => {
         let registerError = document.getElementById('registerError');
         let username = document.getElementById('username').value;
@@ -147,17 +151,17 @@ class ViewController {
 
         registerButton.disabled = true;
 
-        // document.getElementById('username').addEventListener('input', () => {
-        //     this.validateRegister();
-        // });
+        document.getElementById('username').addEventListener('input', () => {
+            this.validateRegister();
+        });
 
-        // document.getElementById('pass').addEventListener('input', () => {
-        //     this.validateRegister();
-        // });
+        document.getElementById('pass').addEventListener('input', () => {
+            this.validateRegister();
+        });
 
-        // document.getElementById('confirm-pass').addEventListener('input', () => {
-        //     this.validateRegister();
-        // });
+        document.getElementById('confirm-pass').addEventListener('input', () => {
+            this.validateRegister();
+        });
 
         registerForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -187,7 +191,7 @@ class ViewController {
             id += Math.floor(Math.random() * 10);
         }
         if (this.usedIDs.includes(id)) {
-            return this.generateID(); 
+            return this.generateID();
         } else {
             this.usedIDs.push(id);
             return id;
@@ -211,10 +215,7 @@ class ViewController {
         let chooseOffer = document.getElementById("chooseOffer");
         chooseOffer.style.display = "none";
 
-
-        let applicationsOverview = document.getElementById("applicationsOverview");
-
-        if (userManager.loggedUser && userManager.loggedUser.isAdmin === false) {
+        if (userManager.loggedUser) {
 
             let borrowerName = userManager.loggedUser.username;
             let cancelBtn = document.getElementById("cancelBtn");
@@ -237,7 +238,6 @@ class ViewController {
             }, 6000);
 
             viewOffersBtn.addEventListener("click", () => {
-                console.log('view button is clicked');
                 allOffers.style.display = "block";
                 lendersOffers.style.display = "block"
                 viewOffersBtn.style.display = "none";
@@ -247,7 +247,7 @@ class ViewController {
             cancelBtn.addEventListener('click', () => {
                 isLoanCanceled = true;
                 clearTimeout(addLoanTimeout);
-                applicationsOverview.style.display = "none";
+                alert("Your loan request is canceled!")
             });
 
             let loanId = document.getElementById("loanId");
@@ -265,7 +265,9 @@ class ViewController {
             alert("Loan submitted successfully!");
             location.hash = "applicationsOverview";
 
-        } if (userManager.loggedUser.isAdmin === true) {
+        }
+
+        if (userManager.loggedUser.isAdmin === true) {
             alert("Don't you dare to request for loan!");
         }
 
