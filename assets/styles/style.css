@@ -1,0 +1,133 @@
+body {
+    font-size: 18px;
+    background-image: url("../images/background.jpg");
+    object-fit: scale-down;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 0.1em;
+}
+
+.page {
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+nav,
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.75);
+}
+
+nav {
+    background-color: rgba(196, 41, 143, 0.7);
+    letter-spacing: 0.1em;
+}
+
+nav a,
+#registerLink {
+    display: flex;
+    text-decoration: none;
+    color: white;
+    margin: 10px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+nav a:hover,
+#registerLink:hover {
+    background-color: rgba(29, 6, 58, 0.6);
+    box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.75);
+}
+#registerLink:hover {
+    background-color: rgba(196, 41, 143, 0.8);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(180, 170, 170, 0.1);
+    height: 400px;
+    width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.75);
+    padding: 20px;
+}
+
+#registerError,
+#loginError {
+    display: none;
+    color: rgb(131, 31, 96);
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+form input,
+form p {
+    width: 200px;
+    height: 30px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 10px;
+    color: white;
+    letter-spacing: 0.1em;
+    text-align: center;
+}
+
+form input{
+    background-color: rgba(180, 170, 170, 0.1);
+    border-bottom: 2px solid rgba(180, 170, 170, 0.1);
+}
+
+form p {
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+
+form input:focus {
+    outline: none;
+}
+
+#loginButton,
+#registerButton {
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 0.1em;
+
+}
+
+#loginButton:enabled,
+#registerButton:enabled {
+    background-color: rgba(196, 41, 143, 0.8);
+    color: white;
+}
+
+footer {
+    background-color: rgba(29, 6, 58, 0.7);
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    color: rgb(245, 200, 229);
+    box-shadow: 0px -10px 10px -6px rgba(0, 0, 0, 0.75);
+    letter-spacing: 0.1em;
+}
+
+footer p {
+    padding: 4px;
+    font-size: 15px;
+    font-weight: 100;
+}
+
