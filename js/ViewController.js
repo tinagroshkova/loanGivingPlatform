@@ -4,6 +4,7 @@ class ViewController {
         window.addEventListener("load", this.handleHashChange);
         window.addEventListener("hashchange", this.handleHashChange);
         this.usedIDs = [];
+        // this.allLoans = localStorage.getItem("allLoans", JSON.parse(this.allLoans));
     }
 
     handleHashChange = () => {
@@ -194,18 +195,21 @@ class ViewController {
             let requestedTerm = document.getElementById("requestedTerm");
 
             let loan = new Loan(id, borrowerName, borrowerIncome.value, requestedAmount.value, requestedTerm.value);
-
+            let isLoanCanceled = false;
+            
             let addLoanTimeout = setTimeout(() => {
                 if (!isLoanCanceled) {
-                    userManager.loggedUser.addLoan(loan);
                     alert("Your credit request will be reviewed by an officer shortly");
+                    userManager.loggedUser.addLoan(loan);
+                    loanManager.addToAllLoans(loan);
+
                     viewOffersBtn.style.display = "block";
                     lendersOffers.style.display = "block";
                     cancelBtn.style.display = "none";
                 }
             }, 6000);
 
-            let isLoanCanceled = false;
+
             cancelBtn.addEventListener('click', () => {
                 isLoanCanceled = true;
                 clearTimeout(addLoanTimeout);

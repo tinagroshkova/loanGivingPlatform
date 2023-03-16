@@ -136,3 +136,22 @@ footer p {
 #loanForm label {
     font-size: 14px;
 }
+
+th, td {
+    width: 160px;
+    border: 1px solid white;
+    padding: 10px;
+    font-size: 14px;
+}
+
+#applicationsOverview {
+    display: flex;
+    flex-direction: column;
+}
+
+#applicationsOverview button {
+    width: 100px;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 10px;
+}

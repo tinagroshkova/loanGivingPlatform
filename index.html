@@ -56,38 +56,41 @@
         </form>
     </div>
     <div class="page" id="applicationsOverview">
-        <table>
-            <tr>
-                <th>id</th>
-                <th>requested amount</th>
-                <th>requested term</th>
-                <th>status</th>
-            </tr>
-            <tr>
-                <td id="loanId"></td>
-                <td id="loanAmount"></td>
-                <td id="loanTerm"></td>
-                <td id="loanStatus"></td>
-            </tr>
-        </table>
-        <button id="cancelBtn">Cancel</button>
-        <button id="viewOffers">View offers</button>
-        
-        <table id="lendersOffers">
-            <tr>
-                <th>Interest Rate</th>
-                <th>Loan Amount</th>
-                <th>Monthly Payment</th>
-                <th>Loan Term</th>
-            </tr>
-            <tr>
-                <td id="interestRate"></td>
-                <td id="loanAmountOffer"></td>
-                <td id="monthlyPayment"></td>
-                <td id="loanTermOffer"></td>
-            </tr>
-        </table>
-        <button id="chooseOffer">Choose offer</button>
+        <div id="userAplication">
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>requested amount</th>
+                    <th>requested term</th>
+                    <th>status</th>
+                </tr>
+                <tr>
+                    <td id="loanId"></td>
+                    <td id="loanAmount"></td>
+                    <td id="loanTerm"></td>
+                    <td id="loanStatus"></td>
+                </tr>
+            </table>
+            <button id="cancelBtn">Cancel</button>
+            <button id="viewOffers">View offers</button>
+        </div>
+        <div>
+            <table id="lendersOffers">
+                <tr>
+                    <th>Interest Rate</th>
+                    <th>Loan Amount</th>
+                    <th>Monthly Payment</th>
+                    <th>Loan Term</th>
+                </tr>
+                <tr>
+                    <td id="interestRate"></td>
+                    <td id="loanAmountOffer"></td>
+                    <td id="monthlyPayment"></td>
+                    <td id="loanTermOffer"></td>
+                </tr>
+            </table>
+            <button id="chooseOffer">Choose offer</button>
+        </div>
     </div>
 
     <footer>
