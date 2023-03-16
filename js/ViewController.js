@@ -209,6 +209,7 @@ class ViewController {
         location.hash = "applicationsOverview";
     }
 }
+
 let viewController = new ViewController();
 
 
