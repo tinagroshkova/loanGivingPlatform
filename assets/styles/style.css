@@ -28,6 +28,7 @@ footer {
 nav {
     background-color: rgba(196, 41, 143, 0.7);
     letter-spacing: 0.1em;
+    position: relative;
 }
 
 nav a,
@@ -160,4 +161,9 @@ td {
 
 #lendersOffers {
     display: none;
+}
+
+#userHolder {
+    position: absolute;
+    right: 100px;
 }
