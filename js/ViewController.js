@@ -3,10 +3,8 @@ class ViewController {
     constructor() {
         window.addEventListener("load", this.handleHashChange);
         window.addEventListener("hashchange", this.handleHashChange);
-        this.id = 1;
+        this.usedIDs = [];
     }
-
-
 
     handleHashChange = () => {
         const pageIds = ["login", "register", "home", "applicationsOverview"];
@@ -159,54 +157,83 @@ class ViewController {
             }
             registerForm.reset();
         });
+
+    }
+
+
+    generateID = () => {
+        let id = "";
+        while (id.length < 6) {
+            id += Math.floor(Math.random() * 10);
+        }
+        if (this.usedIDs.includes(id)) {
+            return this.generateID(); // generate a new ID if this one is already used
+        } else {
+            this.usedIDs.push(id);
+            return id;
+        }
     }
 
     handleLoanSubmission = (event) => {
-        let id = 1;
         event.preventDefault();
-        let borrowerName = userManager.loggedUser.username;
-        let cancelBtn = document.getElementById("cancelBtn");
+        let id = this.generateID();
 
-        let borrowerIncome = document.getElementById("borrowerIncome");
-        let requestedAmount = document.getElementById("requestedAmount");
-        let requestedTerm = document.getElementById("requestedTerm");
+        if (userManager.loggedUser.isAdmin === false) {
 
-        let loan = new Loan(borrowerName, borrowerIncome.value, requestedAmount.value, requestedTerm.value);
+            let viewOffersBtn = document.getElementById("viewOffers");
+            viewOffersBtn.style.display = "none";
 
-        let addLoanTimeout = setTimeout(() => {
-            if (!isLoanCanceled) {
-                userManager.loggedUser.addLoan(loan);
-                applicationsOverview.style.display = "none";
-                alert("Your credit request will be reviewed by an officer shortly");
-            }
-        }, 6000);
+            let lendersOffers = document.getElementById("lendersOffers");
+            lendersOffers.style.display = "none";
 
-        let isLoanCanceled = false;
-        cancelBtn.addEventListener('click', () => {
-            isLoanCanceled = true;
-            clearTimeout(addLoanTimeout);
-            applicationsOverview.style.display = "none";
-        });
+            let borrowerName = userManager.loggedUser.username;
+            let cancelBtn = document.getElementById("cancelBtn");
 
-        let loanId = document.getElementById("loanId");
-        loanId.innerText = id;
+            let borrowerIncome = document.getElementById("borrowerIncome");
+            let requestedAmount = document.getElementById("requestedAmount");
+            let requestedTerm = document.getElementById("requestedTerm");
 
-        let loanAmount = document.getElementById("loanAmount");
-        loanAmount.innerText = requestedAmount.value;
+            let loan = new Loan(id, borrowerName, borrowerIncome.value, requestedAmount.value, requestedTerm.value);
 
-        let loanTerm = document.getElementById("loanTerm");
-        loanTerm.innerText = requestedTerm.value;
+            let addLoanTimeout = setTimeout(() => {
+                if (!isLoanCanceled) {
+                    userManager.loggedUser.addLoan(loan);
+                    alert("Your credit request will be reviewed by an officer shortly");
+                    viewOffersBtn.style.display = "block";
+                    lendersOffers.style.display = "block";
+                    cancelBtn.style.display = "none";
+                }
+            }, 6000);
 
-        let status = document.getElementById("loanStatus");
-        status.innerText = "Pending";
+            let isLoanCanceled = false;
+            cancelBtn.addEventListener('click', () => {
+                isLoanCanceled = true;
+                clearTimeout(addLoanTimeout);
+            });
 
-        alert("Loan submitted successfully!");
+            let loanId = document.getElementById("loanId");
+            loanId.innerText = id;
 
+            let loanAmount = document.getElementById("loanAmount");
+            loanAmount.innerText = requestedAmount.value;
+
+            let loanTerm = document.getElementById("loanTerm");
+            loanTerm.innerText = requestedTerm.value;
+
+            let status = document.getElementById("loanStatus");
+            status.innerText = "Pending";
+
+            alert("Loan submitted successfully!");
+
+
+            
+            location.hash = "applicationsOverview";
+        } else {
+            alert("Don't you dare to request for loan!");
+        }
         borrowerIncome.value = borrowerIncome.defaultValue;
         requestedAmount.value = requestedAmount.defaultValue;
         requestedTerm.value = requestedTerm.defaultValue;
-
-        location.hash = "applicationsOverview";
     }
 }
 

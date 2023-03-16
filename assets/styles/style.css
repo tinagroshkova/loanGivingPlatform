@@ -4,6 +4,8 @@ body {
     object-fit: scale-down;
     font-family: 'Roboto', sans-serif;
     letter-spacing: 0.1em;
+    color: white;
+    text-align: center;
 }
 
 .page {
@@ -131,3 +133,6 @@ footer p {
     font-weight: 100;
 }
 
+#loanForm label {
+    font-size: 14px;
+}
