@@ -4,7 +4,6 @@ class ViewController {
         window.addEventListener("load", this.handleHashChange);
         window.addEventListener("hashchange", this.handleHashChange);
         this.usedIDs = [];
-        // this.allLoans = localStorage.getItem("allLoans", JSON.parse(this.allLoans));
     }
 
     handleHashChange = () => {
@@ -179,13 +178,24 @@ class ViewController {
         event.preventDefault();
         let id = this.generateID();
 
+        //set all buttons depending the loan status
+
+        let lendersOffers = document.getElementById("lendersOffers");
+        
+        let allOffers = document.getElementById("allOffers");
+        allOffers.style.display = "none";
+
+        let viewOffersBtn = document.getElementById("viewOffers");
+        viewOffersBtn.style.display = "none";
+
+        let chooseOffer = document.getElementById("chooseOffer");
+        chooseOffer.style.display = "none";
+
+
+        let applicationsOverview = document.getElementById("applicationsOverview");
+
         if (userManager.loggedUser.isAdmin === false) {
 
-            let viewOffersBtn = document.getElementById("viewOffers");
-            viewOffersBtn.style.display = "none";
-
-            let lendersOffers = document.getElementById("lendersOffers");
-            lendersOffers.style.display = "none";
 
             let borrowerName = userManager.loggedUser.username;
             let cancelBtn = document.getElementById("cancelBtn");
@@ -202,17 +212,23 @@ class ViewController {
                     alert("Your credit request will be reviewed by an officer shortly");
                     userManager.loggedUser.addLoan(loan);
                     loanManager.addToAllLoans(loan);
-
                     viewOffersBtn.style.display = "block";
-                    lendersOffers.style.display = "block";
-                    cancelBtn.style.display = "none";
                 }
             }, 6000);
 
 
+            viewOffersBtn.addEventListener("click", () => {
+                console.log('view button is clicked');
+                allOffers.style.display = "block";
+                lendersOffers.style.display = "block"
+                viewOffersBtn.style.display = "none";
+                chooseOffer.style.display = "block";
+            });
+
             cancelBtn.addEventListener('click', () => {
                 isLoanCanceled = true;
                 clearTimeout(addLoanTimeout);
+                applicationsOverview.style.display = "none";
             });
 
             let loanId = document.getElementById("loanId");
@@ -228,13 +244,13 @@ class ViewController {
             status.innerText = "Pending";
 
             alert("Loan submitted successfully!");
-
-
-            
             location.hash = "applicationsOverview";
+
         } else {
             alert("Don't you dare to request for loan!");
         }
+
+
         borrowerIncome.value = borrowerIncome.defaultValue;
         requestedAmount.value = requestedAmount.defaultValue;
         requestedTerm.value = requestedTerm.defaultValue;
