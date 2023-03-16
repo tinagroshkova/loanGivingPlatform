@@ -99,7 +99,6 @@ class ViewController {
 
     renderLogout = () => {
         let logOut = document.getElementById("logOut");
-        logOut.addEventListener("click", logUserOut);
         
         let logUserOut = () => {
             if (window.confirm("Do you really want to leave?")) {
@@ -111,6 +110,7 @@ class ViewController {
                 logOut.removeEventListener("click", logUserOut); // remove the listener
             }
         };
+        logOut.addEventListener("click", logUserOut);
     };
 
     validateRegister = () => {
@@ -214,8 +214,9 @@ class ViewController {
 
         let chooseOffer = document.getElementById("chooseOffer");
         chooseOffer.style.display = "none";
+        
 
-        if (userManager.loggedUser) {
+        if (userManager.loggedUser.isAdmin === false) {
 
             let borrowerName = userManager.loggedUser.username;
             let cancelBtn = document.getElementById("cancelBtn");
@@ -267,7 +268,7 @@ class ViewController {
 
         }
 
-        if (userManager.loggedUser.isAdmin === true) {
+        else {
             alert("Don't you dare to request for loan!");
         }
 
