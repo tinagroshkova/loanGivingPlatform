@@ -97,9 +97,10 @@ class ViewController {
         return true;
     }
 
+
     renderLogout = () => {
         let logOut = document.getElementById("logOut");
-        
+
         let logUserOut = () => {
             if (window.confirm("Do you really want to leave?")) {
                 userManager.logout();
@@ -107,11 +108,13 @@ class ViewController {
                 loggedUser.innerText = "";
                 logOut.innerText = "";
                 location.hash = "login";
-                logOut.removeEventListener("click", logUserOut); // remove the listener
+                logOut.removeEventListener("click", logUserOut);
             }
         };
+
         logOut.addEventListener("click", logUserOut);
     };
+
 
     validateRegister = () => {
         let registerError = document.getElementById('registerError');
@@ -148,32 +151,33 @@ class ViewController {
         let registerForm = document.getElementById("registerForm");
         let registerButton = document.getElementById('registerButton');
         let registerError = document.getElementById('registerError');
-
+    
         registerButton.disabled = true;
-
+    
         document.getElementById('username').addEventListener('input', () => {
             this.validateRegister();
         });
-
+    
         document.getElementById('pass').addEventListener('input', () => {
             this.validateRegister();
         });
-
+    
         document.getElementById('confirm-pass').addEventListener('input', () => {
             this.validateRegister();
         });
-
+    
         registerForm.addEventListener("submit", (e) => {
             e.preventDefault();
-
+    
             if (this.validateRegister()) {
                 let username = document.getElementById('username').value;
                 let pass = document.getElementById('pass').value;
                 let registrationSuccessful = userManager.register({ username, pass });
-
+    
                 if (registrationSuccessful) {
-                    userManager.loggedUser = { username, pass };
+                    let newUser = userManager.loggedUser;
                     location.hash = "home";
+                    alert(`Great ${newUser.username}! You are registered now`);
                 } else {
                     registerError.innerText = 'Username already taken';
                     registerError.style.display = 'block';
@@ -181,8 +185,7 @@ class ViewController {
             }
             registerForm.reset();
         });
-
-    }
+    };
 
 
     generateID = () => {
@@ -202,7 +205,7 @@ class ViewController {
         event.preventDefault();
         let id = this.generateID();
 
-        //set all buttons depending the loan status
+        let applicationsOverview = document.getElementById("applicationsOverview");
 
         let lendersOffers = document.getElementById("lendersOffers");
 
@@ -214,27 +217,23 @@ class ViewController {
 
         let chooseOffer = document.getElementById("chooseOffer");
         chooseOffer.style.display = "none";
-        
+
+        let borrowerName = userManager.loggedUser.username;
+        let cancelBtn = document.getElementById("cancelBtn");
+
+        let borrowerIncome = document.getElementById("borrowerIncome");
+        let requestedAmount = document.getElementById("requestedAmount");
+        let requestedTerm = document.getElementById("requestedTerm");
 
         if (userManager.loggedUser.isAdmin === false) {
-
-            let borrowerName = userManager.loggedUser.username;
-            let cancelBtn = document.getElementById("cancelBtn");
-
-            let borrowerIncome = document.getElementById("borrowerIncome");
-            let requestedAmount = document.getElementById("requestedAmount");
-            let requestedTerm = document.getElementById("requestedTerm");
-
             let loan = new Loan(id, borrowerName, borrowerIncome.value, requestedAmount.value, requestedTerm.value);
             let isLoanCanceled = false;
 
             let addLoanTimeout = setTimeout(() => {
-
                 if (!isLoanCanceled) {
                     alert("Your credit request will be reviewed by an officer shortly");
-                    userManager.loggedUser.addLoan(loan);
-                    loanManager.addToAllLoans(loan);
-                    viewOffersBtn.style.display = "block";
+                    loanManager.evaluateLoan(loan);
+                    cancelBtn.style.display = "none";
                 }
             }, 6000);
 
@@ -249,6 +248,9 @@ class ViewController {
                 isLoanCanceled = true;
                 clearTimeout(addLoanTimeout);
                 alert("Your loan request is canceled!")
+                cancelBtn.style.display = "none";
+                applicationsOverview.style.display = "none";
+
             });
 
             let loanId = document.getElementById("loanId");
@@ -266,9 +268,7 @@ class ViewController {
             alert("Loan submitted successfully!");
             location.hash = "applicationsOverview";
 
-        }
-
-        else {
+        } else {
             alert("Don't you dare to request for loan!");
         }
 
@@ -278,6 +278,5 @@ class ViewController {
     }
 }
 
+
 let viewController = new ViewController();
-
-

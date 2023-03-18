@@ -19,30 +19,27 @@ class User {
 class Admin extends User {
     constructor(name, password) {
         super(name, password, true);
-        this.pendingLoans = [];
-        this.approvedLoans = [];
-        this.rejectedLoans = [];
     }
 
-    approveLoan(loan) {
-        if (this.pendingLoans.includes(loan)) {
-            this.pendingLoans.splice(this.pendingLoans.indexOf(loan), 1);
-            this.approvedLoans.push(loan);
-            console.log(`Loan with ID ${loan.id} has been approved.`);
-        } else {
-            console.log(`Loan with ID ${loan.id} is not pending.`);
-        }
-    }
+    // approveLoan(loan) {
+    //     if (this.pendingLoans.includes(loan)) {
+    //         this.pendingLoans.splice(this.pendingLoans.indexOf(loan), 1);
+    //         this.approvedLoans.push(loan);
+    //         console.log(`Loan with ID ${loan.id} has been approved.`);
+    //     } else {
+    //         console.log(`Loan with ID ${loan.id} is not pending.`);
+    //     }
+    // }
 
-    rejectLoan(loan) {
-        if (this.pendingLoans.includes(loan)) {
-            this.pendingLoans.splice(this.pendingLoans.indexOf(loan), 1);
-            this.rejectedLoans.push(loan);
-            console.log(`Loan with ID ${loan.id} has been rejected.`);
-        } else {
-            console.log(`Loan with ID ${loan.id} is not pending.`);
-        }
-    }
+    // rejectLoan(loan) {
+    //     if (this.pendingLoans.includes(loan)) {
+    //         this.pendingLoans.splice(this.pendingLoans.indexOf(loan), 1);
+    //         this.rejectedLoans.push(loan);
+    //         console.log(`Loan with ID ${loan.id} has been rejected.`);
+    //     } else {
+    //         console.log(`Loan with ID ${loan.id} is not pending.`);
+    //     }
+    // }
 }
 
 class UserManager {
@@ -109,12 +106,15 @@ class UserManager {
 
     register = ({ username, pass }) => {
         let foundUser = this.users.find((user) => user.username === username);
-
+    
         if (foundUser) {
             return false;
         }
-
-        this.users.push(new User(username, pass, false, []));
+    
+        let newUser = new User(username, pass, false, []);
+        this.users.push(newUser);
+        this.loggedUser = newUser;
+        localStorage.setItem("isThereUser", JSON.stringify(this.loggedUser));
         localStorage.setItem("allUsers", JSON.stringify(this.users));
         return true;
     };
@@ -136,28 +136,7 @@ class UserManager {
         this.loggedUser = null;
         localStorage.removeItem("isThereUser");
     };
-
-    getPendingLoans = () => {
-        if (this.loggedUser instanceof Admin) {
-            return this.loggedUser.pendingLoans;
-        } else {
-            return [];
-        }
-    };
-
-    approveLoan = (loan) => {
-        if (this.loggedUser instanceof Admin) {
-            this.loggedUser.approveLoan(loan);
-        }
-    };
-
-    rejectLoan = (loan) => {
-        if (this.loggedUser instanceof Admin) {
-            this.loggedUser.rejectLoan(loan);
-        }
-    };
 }
 
 let userManager = new UserManager();
-
 

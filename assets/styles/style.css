@@ -88,7 +88,8 @@ form p {
     text-align: center;
 }
 
-form input {
+form input,
+#submitLoan {
     background-color: rgba(180, 170, 170, 0.1);
     border-bottom: 2px solid rgba(180, 170, 170, 0.1);
 }
@@ -104,16 +105,19 @@ form input:focus {
 }
 
 #loginButton,
-#registerButton {
+#registerButton,
+#submitLoan,
+#cancelBtn,
+#viewOffers {
     height: 40px;
     font-size: 20px;
     text-align: center;
     letter-spacing: 0.1em;
-
 }
 
 #loginButton:enabled,
-#registerButton:enabled {
+#registerButton:enabled,
+#submitLoan:enabled {
     background-color: rgba(196, 41, 143, 0.8);
     color: white;
 }
@@ -154,9 +158,14 @@ td {
 
 #applicationsOverview button {
     width: 100px;
-    font-weight: 600;
     font-size: 16px;
     margin: 10px;
+    border: none;
+    font-weight: 400;
+    border-radius: 10px;
+    box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.75);
+    background-color: rgba(111, 26, 81, 0.8);
+    color: white;
 }
 
 #lendersOffers {
