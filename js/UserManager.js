@@ -4,10 +4,9 @@ class User {
         this.pass = pass;
         this.isAdmin = isAdmin;
         this.loans = loans;
-        this.monthlyIncome = localStorage.getItem(`${user}_monthlyIncome`) || 0;
-        this.money = Math.floor(Math.random() * 10001);
-        this.money = localStorage.getItem(`${user}_money`) || Math.floor(Math.random() * 10001);
-        this.lastUpdated = localStorage.getItem(`${user}_lastUpdated`) || Date.now();
+        this.monthlyIncome = Number(localStorage.getItem(`${user}_monthlyIncome`) || 0);
+        this.money = Number(Math.floor(Math.random() * 10001));
+        this.money = Number(localStorage.getItem(`${user}_money`) || Math.floor(Math.random() * 10001));
 
 
         setInterval(() => {
@@ -17,13 +16,9 @@ class User {
     }
 
     updateMoney() {
-        const now = Date.now();
-        const monthsPassed = Math.floor((now - this.lastUpdated) / 30000); // 30 seconds per month
-        this.money = parseInt(this.money) + this.monthlyIncome * monthsPassed;
-        this.lastUpdated = parseInt(this.lastUpdated) + monthsPassed * 30000;
+        this.money = parseInt(this.money) + this.monthlyIncome ;
         localStorage.setItem(`${this.username}_monthlyIncome`, this.monthlyIncome);
         localStorage.setItem(`${this.username}_money`, this.money);
-        localStorage.setItem(`${this.username}_lastUpdated`, this.lastUpdated.toString());
     }
 
     addLoan(loan) {
@@ -99,8 +94,8 @@ class UserManager {
             });
         } else {
             this.users = [
-                new User("slavi", "bahur", false, [], 0),
-                new User("bahur", "slavi", false, [], 0),
+                new User("slavi", "bahur", false, []),
+                new User("bahur", "slavi", false, []),
                 new Admin("tina", "12345", true),
             ];
             localStorage.setItem("allUsers", JSON.stringify(this.users));
@@ -143,12 +138,13 @@ class UserManager {
         return loans.map(loan => new Loan(
             loan.id,
             loan.name,
-            Number(loan.montlyIncome),
-            Number(loan.desiredAmount),
+            loan.montlyIncome,
+            loan.desiredAmount,
             loan.desiredTerm,
             loan.selectedOffer,
-            Number(loan.totalAmount)
+            loan.totalAmount
         ));
+        //id, name, monthlyIncome, desiredAmount, desiredTerm, selectedOffer, totalAmount
     };
 
     logout = () => {

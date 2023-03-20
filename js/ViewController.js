@@ -4,6 +4,7 @@ class ViewController {
         window.addEventListener("load", this.handleHashChange);
         window.addEventListener("hashchange", this.handleHashChange);
         this.usedIDs = [];
+        this.statisticsPage = document.getElementById("statisticsPage").style.display = "none";
     }
 
     handleHashChange = () => {
@@ -82,12 +83,12 @@ class ViewController {
                 } else {
                     alert("Great! You are logged in now!");
                     if (userManager.loggedUser.isAdmin) {
-                        location.hash = "statistics";
                         document.getElementById("statisticsPage").style.display = "block";
+                        document.getElementById("loasOverview").style.display = "none";
+                        location.hash = "statistics";
                         this.renderLoansTableBody();
                     } else {
                         this.renderUserLoans();
-                        document.getElementById("loansOverviewPage").style.display = "block";
                         location.hash = "home";
                     }
                     errorMessage.innerText = "";
@@ -191,6 +192,7 @@ class ViewController {
                     let newUser = userManager.loggedUser;
                     location.hash = "home";
                     alert(`Great ${newUser.username}! You are registered now`);
+                    document.getElementById("loansOverviewPage").style.display = "block";
                 } else {
                     registerError.innerText = 'Username already taken';
                     registerError.style.display = 'block';
@@ -311,6 +313,7 @@ class ViewController {
             alert("No loans found!");
         }
     };
+
     renderUserLoans = () => {
         if (userManager.loggedUser.isAdmin === false) {
             let userLoans = userManager.loggedUser.loans;
