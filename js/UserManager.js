@@ -1,45 +1,63 @@
 class User {
-    constructor(user, pass, isAdmin, loans) {
+    constructor(user, pass, isAdmin, loans, monthlyIncome) {
         this.username = user;
         this.pass = pass;
         this.isAdmin = isAdmin;
         this.loans = loans;
+        this.monthlyIncome = localStorage.getItem(`${user}_monthlyIncome`) || 0;
+        this.money = Math.floor(Math.random() * 10001);
+        this.money = localStorage.getItem(`${user}_money`) || Math.floor(Math.random() * 10001);
+        this.lastUpdated = localStorage.getItem(`${user}_lastUpdated`) || Date.now();
+
+
+        setInterval(() => {
+            this.updateMoney();
+        }, 30000);
+
+    }
+
+    updateMoney() {
+        const now = Date.now();
+        const monthsPassed = Math.floor((now - this.lastUpdated) / 30000); // 30 seconds per month
+        this.money = parseInt(this.money) + this.monthlyIncome * monthsPassed;
+        this.lastUpdated = parseInt(this.lastUpdated) + monthsPassed * 30000;
+        localStorage.setItem(`${this.username}_monthlyIncome`, this.monthlyIncome);
+        localStorage.setItem(`${this.username}_money`, this.money);
+        localStorage.setItem(`${this.username}_lastUpdated`, this.lastUpdated.toString());
     }
 
     addLoan(loan) {
-        if (this.isAdmin === false) {
-            this.loans.push(loan);
-            localStorage.setItem(this.username, JSON.stringify(this.loans));
-        } else {
-            alert("You can't request for loan, fking admin!")
-        }
+        this.loans.push(loan);
+        this.monthlyIncome = parseInt(loan.monthlyIncome);
+        localStorage.setItem(this.username, JSON.stringify(this.loans));
     }
+    repayLoan(id) {
+        const index = this.loans.findIndex(loan => loan.id === id);
+        if (index === -1) {
+            return false; 
+        }
+        const [removedLoan] = this.loans.splice(index, 1);
+        localStorage.setItem(this.username, JSON.stringify(this.loans));
+
+        // update allLoans array to show that loan has been repaid
+        const allLoans = JSON.parse(localStorage.getItem("allLoans")) || [];
+        const updatedAllLoans = allLoans.map(loan => {
+            if (loan.id === id) {
+                return { ...loan, isRepaid: true };
+            }
+            return loan;
+        });
+        localStorage.setItem("allLoans", JSON.stringify(updatedAllLoans));
+
+        return removedLoan;
+    }
+
 }
 
 class Admin extends User {
     constructor(name, password) {
         super(name, password, true);
     }
-
-    // approveLoan(loan) {
-    //     if (this.pendingLoans.includes(loan)) {
-    //         this.pendingLoans.splice(this.pendingLoans.indexOf(loan), 1);
-    //         this.approvedLoans.push(loan);
-    //         console.log(`Loan with ID ${loan.id} has been approved.`);
-    //     } else {
-    //         console.log(`Loan with ID ${loan.id} is not pending.`);
-    //     }
-    // }
-
-    // rejectLoan(loan) {
-    //     if (this.pendingLoans.includes(loan)) {
-    //         this.pendingLoans.splice(this.pendingLoans.indexOf(loan), 1);
-    //         this.rejectedLoans.push(loan);
-    //         console.log(`Loan with ID ${loan.id} has been rejected.`);
-    //     } else {
-    //         console.log(`Loan with ID ${loan.id} is not pending.`);
-    //     }
-    // }
 }
 
 class UserManager {
@@ -58,7 +76,7 @@ class UserManager {
                     loggedUser.username,
                     loggedUser.pass,
                     false,
-                    this.loadLoans(loggedUser.username)
+                    this.loadLoans(loggedUser.username),
                 );
             }
         }
@@ -74,14 +92,15 @@ class UserManager {
                         user.username,
                         user.pass,
                         false,
-                        this.loadLoans(user.username)
+                        this.loadLoans(user.username),
+                        0
                     );
                 }
             });
         } else {
             this.users = [
-                new User("slavi", "bahur", false, []),
-                new User("bahur", "slavi", false, []),
+                new User("slavi", "bahur", false, [], 0),
+                new User("bahur", "slavi", false, [], 0),
                 new Admin("tina", "12345", true),
             ];
             localStorage.setItem("allUsers", JSON.stringify(this.users));
@@ -106,11 +125,11 @@ class UserManager {
 
     register = ({ username, pass }) => {
         let foundUser = this.users.find((user) => user.username === username);
-    
+
         if (foundUser) {
             return false;
         }
-    
+
         let newUser = new User(username, pass, false, []);
         this.users.push(newUser);
         this.loggedUser = newUser;
@@ -121,22 +140,22 @@ class UserManager {
 
     loadLoans = (username) => {
         let loans = JSON.parse(localStorage.getItem(username)) || [];
-        return loans.map(loan =>
-            new Loan(
-                loan.id,
-                loan.name,
-                loan.montlyIncome,
-                loan.desiredAmount,
-                loan.desiredTerm
-            )
-        );
+        return loans.map(loan => new Loan(
+            loan.id,
+            loan.name,
+            Number(loan.montlyIncome),
+            Number(loan.desiredAmount),
+            loan.desiredTerm,
+            loan.selectedOffer,
+            Number(loan.totalAmount)
+        ));
     };
 
     logout = () => {
         this.loggedUser = null;
         localStorage.removeItem("isThereUser");
     };
+
 }
 
 let userManager = new UserManager();
-

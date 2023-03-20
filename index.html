@@ -22,6 +22,8 @@
             <span id="loggedUserName"></span>
             <span id="logOut"></p>
         </div>
+        <a id="loasOverview" href="#loansOverviewPage">Loans Overview</a>
+        <a id="statisticsPage" href="#statistics">Statistics</a>
     </nav>
 
     <div class="page" id="login">
@@ -63,10 +65,10 @@
         <div id="userAplication">
             <table>
                 <tr>
-                    <th>id</th>
-                    <th>requested amount</th>
-                    <th>requested term</th>
-                    <th>status</th>
+                    <th>Loan ID</th>
+                    <th>Requested amount</th>
+                    <th>Requested term</th>
+                    <th>Status</th>
                 </tr>
                 <tr>
                     <td id="loanId"></td>
@@ -80,21 +82,16 @@
         </div>
         <div id="allOffers">
             <table id="lendersOffers">
-                <tr>
-                    <th>Interest Rate</th>
-                    <th>Loan Amount</th>
-                    <th>Monthly Payment</th>
-                    <th>Loan Term</th>
-                    <button id="chooseOffer">Choose offer</button>
-                </tr>
-                <tr>
-                    <td id="interestRate"></td>
-                    <td id="loanAmountOffer"></td>
-                    <td id="monthlyPayment"></td>
-                    <td id="loanTermOffer"></td>
-                </tr>
             </table>
         </div>
+    </div>
+    <div class="page" id="loansOverviewPage">
+        <table id="userLoans"></table>
+    </div>
+    <div class="page" id="statistics">
+        <table id="loansTableBody">
+        </table>
+
     </div>
 
     <footer>

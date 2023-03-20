@@ -7,9 +7,9 @@ class ViewController {
     }
 
     handleHashChange = () => {
-        const pageIds = ["login", "register", "home", "applicationsOverview"];
+        const pageIds = ["login", "register", "home", "applicationsOverview", "loansOverviewPage", "statistics"];
 
-        let hash = location.hash.slice(1) || pageIds[0];
+        let hash = location.hash.slice(1) || "login";
 
         if (hash === "home") {
             let loggedUser = document.getElementById("loggedUserName");
@@ -27,7 +27,7 @@ class ViewController {
             document.getElementById("borrowerName").value = userManager.loggedUser.username;
         }
 
-        pageIds.forEach(pageId => {
+        pageIds.forEach((pageId) => {
             let element = document.getElementById(pageId);
             if (pageId === hash) {
                 element.style.display = "flex";
@@ -45,8 +45,11 @@ class ViewController {
                 this.validateRegister();
                 this.renderRegister();
                 break;
+            case "loansOverviewPage":
+                this.renderUserLoans();
+                break;
         }
-    }
+    };
 
     renderLogin = () => {
         let form = document.getElementById('loginForm');
@@ -78,7 +81,15 @@ class ViewController {
 
                 } else {
                     alert("Great! You are logged in now!");
-                    location.hash = "home";
+                    if (userManager.loggedUser.isAdmin) {
+                        location.hash = "statistics";
+                        document.getElementById("statisticsPage").style.display = "block";
+                        this.renderLoansTableBody();
+                    } else {
+                        this.renderUserLoans();
+                        document.getElementById("loansOverviewPage").style.display = "block";
+                        location.hash = "home";
+                    }
                     errorMessage.innerText = "";
                     console.log(userManager.loggedUser);
 
@@ -113,6 +124,8 @@ class ViewController {
         };
 
         logOut.addEventListener("click", logUserOut);
+        // document.getElementById("statisticsPage").style.display = "none";
+        // document.getElementById("loansOverviewPage").style.display = "none";
     };
 
 
@@ -151,29 +164,29 @@ class ViewController {
         let registerForm = document.getElementById("registerForm");
         let registerButton = document.getElementById('registerButton');
         let registerError = document.getElementById('registerError');
-    
+
         registerButton.disabled = true;
-    
+
         document.getElementById('username').addEventListener('input', () => {
             this.validateRegister();
         });
-    
+
         document.getElementById('pass').addEventListener('input', () => {
             this.validateRegister();
         });
-    
+
         document.getElementById('confirm-pass').addEventListener('input', () => {
             this.validateRegister();
         });
-    
+
         registerForm.addEventListener("submit", (e) => {
             e.preventDefault();
-    
+
             if (this.validateRegister()) {
                 let username = document.getElementById('username').value;
                 let pass = document.getElementById('pass').value;
                 let registrationSuccessful = userManager.register({ username, pass });
-    
+
                 if (registrationSuccessful) {
                     let newUser = userManager.loggedUser;
                     location.hash = "home";
@@ -215,9 +228,6 @@ class ViewController {
         let viewOffersBtn = document.getElementById("viewOffers");
         viewOffersBtn.style.display = "none";
 
-        let chooseOffer = document.getElementById("chooseOffer");
-        chooseOffer.style.display = "none";
-
         let borrowerName = userManager.loggedUser.username;
         let cancelBtn = document.getElementById("cancelBtn");
 
@@ -235,13 +245,12 @@ class ViewController {
                     loanManager.evaluateLoan(loan);
                     cancelBtn.style.display = "none";
                 }
-            }, 6000);
+            }, 2000); // da go promenq predi da ka4a
 
             viewOffersBtn.addEventListener("click", () => {
                 allOffers.style.display = "block";
                 lendersOffers.style.display = "block"
                 viewOffersBtn.style.display = "none";
-                chooseOffer.style.display = "block";
             });
 
             cancelBtn.addEventListener('click', () => {
@@ -257,10 +266,10 @@ class ViewController {
             loanId.innerText = id;
 
             let loanAmount = document.getElementById("loanAmount");
-            loanAmount.innerText = requestedAmount.value;
+            loanAmount.innerText = "$" + requestedAmount.value;
 
             let loanTerm = document.getElementById("loanTerm");
-            loanTerm.innerText = requestedTerm.value;
+            loanTerm.innerText = requestedTerm.value + " months";
 
             let status = document.getElementById("loanStatus");
             status.innerText = "Pending";
@@ -276,7 +285,88 @@ class ViewController {
         requestedAmount.value = requestedAmount.defaultValue;
         requestedTerm.value = requestedTerm.defaultValue;
     }
+
+    renderLoansTableBody = () => {
+        const loansStatistics = loanManager.getAllLoans();
+        localStorage.setItem("loansStatistics", JSON.stringify(loansStatistics));
+        console.log(loansStatistics);
+        let tableBody = document.getElementById("loansTableBody");
+        let lendersOffersCount = loanManager.sortLendersByOffer(); //to fix this
+        console.log(lendersOffersCount);
+        let totalCount = loansStatistics.acceptedLoans.length + loansStatistics.rejectedLoans.length;
+        if (loansStatistics) {
+
+            tableBody.innerHTML = `
+            <tbody>
+            <tr><td>Number of loan applications that were eligible</td><td>${loansStatistics.acceptedLoans.length}</td></tr>
+            <tr><td>Number of loan applications that were rejected</td><td>${loansStatistics.rejectedLoans.length}</td></tr>
+            <tr><td>Number of loan applications for each lender</td><td>${lendersOffersCount}</td></tr>
+            <tr><td>Total loan amount requested</td><td>$${loanManager.getTotalLoansAmount() + loanManager.getRejectedLoansAmount()}</td></tr>
+            <tr><td>Total loan amount approved</td><td>$${loanManager.getTotalLoansAmount()}</td></tr>
+            <tr><td>Total monthly payment for all loans</td><td>$${loanManager.getTotalMontlyPayment()}</td></tr>
+            <tr><td>Total number of loan applications</td><td>${totalCount}</td></tr>
+            </tbody>
+            `;
+        } else {
+            alert("No loans found!");
+        }
+    };
+    renderUserLoans = () => {
+        if (userManager.loggedUser.isAdmin === false) {
+            let userLoans = userManager.loggedUser.loans;
+            if (userLoans.length) {
+                let table = document.getElementById("userLoans");
+                table.innerHTML = "";
+
+                let tableHeader = document.createElement("tr");
+                tableHeader.innerHTML = `<tr> 
+                <th>Loan ID</th> 
+                <th>Interest rate</th> 
+                <th>Total loan amount</th> 
+                <th>Monthly payment</th> 
+                <th>Requested term</th> 
+                <th>Status</th>`;
+                table.append(tableHeader);
+
+                userLoans.forEach(loan => {
+                    let tr = document.createElement("tr");
+                    tr.innerHTML = "";
+                    tr.innerHTML = `
+                        <td>${loan.id}</td>
+                        <td>${loan.selectedOffer.interestRate}%</td> 
+                        <td>$${loan.selectedOffer.totalAmount}</td> 
+                        <td>$${loan.selectedOffer.monthlyPayment.toFixed(2)}</td> 
+                        <td>${loan.desiredTerm} months</td> 
+                        <td>Accepted</td>
+                    `;
+                    table.append(tr);
+
+
+                    let repayBtn = document.createElement("button");
+                    repayBtn.innerText = "Repay in full";
+                    repayBtn.classList.add("repayBtn");
+
+                    repayBtn.addEventListener("click", () => {
+                        if (userManager.loggedUser.money >= loan.selectedOffer.totalAmount){
+                            console.log(userManager.loggedUser.money)
+                            userManager.loggedUser.repayLoan(loan.id);
+                            loanManager.repayLoan(loan.id);
+                            alert("Great! You repaid your loan");
+                            userManager.loggedUser.money -= loan.selectedOffer.totalAmount;
+                            console.log(userManager.loggedUser.money)
+                            table.removeChild(tr);
+
+                        } else {
+                            alert("You have not enough money")
+                        }
+    
+                    })
+                    tr.append(repayBtn);
+                })
+            }
+        }
+    }
 }
 
-
 let viewController = new ViewController();
+
