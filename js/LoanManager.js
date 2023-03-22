@@ -217,22 +217,6 @@ class LoanManager {
             return totalAmount + parseInt(loan.selectedOffer.monthlyPayment);
         }, 0);
     }
-
-    sortLendersByOffer() {
-        let lendersOffersCount = [0, 0, 0]; // to fix this
-
-
-        this.allLoans.forEach(loan => {
-            if (loan.selectedOffer.lender === "Lender 1") {
-                lendersOffersCount[0]++;
-            } else if (loan.selectedOffer.lender === "Lender 2") {
-                lendersOffersCount[1]++;
-            } else {
-                lendersOffersCount[2]++;
-            }
-            return lendersOffersCount;
-        })
-    }
 }
 
 
